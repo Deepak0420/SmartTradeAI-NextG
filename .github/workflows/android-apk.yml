@@ -13,30 +13,35 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
-      - uses:       - uses: android-actions/setup-android@v3
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
         with:
           accept-android-sdk-licenses: false
           packages: platform-tools
 
-      - name: Accept Android SDK licenses
+      - name: Accept SDK licenses
         run: yes | sdkmanager --licenses
 
       - name: Install Android SDK
-        run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - uses: gradle/actions/setup-gradle@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "9.3.1"
 
-      - name: Extract project
+      - name: Extract source ZIP
         run: |
           mkdir -p project
           unzip -q SmartTradeAI-NextG-updated-source.zip -d project
@@ -52,3 +57,5 @@ jobs:
           name: SmartTradeAI-NextG-debug-apk
           path: project/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+          retention-days: 14
+          
